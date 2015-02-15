@@ -11,6 +11,23 @@ $settings = array(
 'consumer_secret' => $CONSUMER_SECRET
 );
 
+function showRateLimit($settings){
+
+	$url = "https://api.twitter.com/1.1/application/rate_limit_status.json";
+	
+	$requestMethod = "GET";
+	$getfield = "?resources=help,users,search,statuses";
+	$twitter = new TwitterAPIExchange($settings);
+	$string = json_decode($twitter->setGetfield($getfield)
+	->buildOauth($url, $requestMethod)
+	->performRequest(),$assoc = TRUE);
+
+	//return $string["friends_count"];
+	var_dump($string);
+}
+
+showRateLimit($settings);
+
 function getFriendCount($settings,$user){
 
 	$url = "https://api.twitter.com/1.1/users/show.json";
@@ -26,8 +43,8 @@ function getFriendCount($settings,$user){
 }
 
 $user = "juanantoniobm";
-//$friendCounter = getFriendCount($settings,$user);
-//echo $friendCounter;
+$friendCounter = getFriendCount($settings,$user);
+echo $friendCounter;
 
 function isFriend($settings,$user,$userToDetect){
 
@@ -49,16 +66,19 @@ function getFriendPage($settings,$user,$nextCursor){
 	$url = "https://api.twitter.com/1.1/friends/list.json";
 
 	$requestMethod = "GET";
-	$getfield = "?screen_name=$user&count=200";
+	
 	//https://dev.twitter.com/overview/api/cursoring
 	if($nextCursor != 0){
 		$getfield = "?screen_name=$user&count=200&cursor=$nextCursor";
+	}else{
+		$getfield = "?screen_name=$user&count=200";
 	}
 	$twitter = new TwitterAPIExchange($settings);
 	$string = json_decode($twitter->setGetfield($getfield)
 	->buildOauth($url, $requestMethod)
 	->performRequest(),$assoc = TRUE);
 	$users = $string["users"];
+	//var_dump($users);
 
 	$i=0;
 	foreach ($users as &$user) {
