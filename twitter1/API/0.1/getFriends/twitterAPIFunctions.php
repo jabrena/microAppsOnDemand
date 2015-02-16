@@ -1,15 +1,11 @@
 <?
-require_once('./config.php');
-require_once('./lib/twitterAPIExchange/TwitterAPIExchange.php');
-?>
-<?php
-
 $settings = array(
 'oauth_access_token' => $ACCESS_TOKEN,
 'oauth_access_token_secret' => $ACCESS_TOKEN_SECRET,
 'consumer_key' => $CONSUMER_KEY,
 'consumer_secret' => $CONSUMER_SECRET
 );
+
 
 function showRateLimit($settings){
 
@@ -23,10 +19,10 @@ function showRateLimit($settings){
 	->performRequest(),$assoc = TRUE);
 
 	//return $string["friends_count"];
-	var_dump($string);
-}
+	//var_dump($string);
 
-showRateLimit($settings);
+	return intval($string ["resources"]["users"]["/users/show/:id"]["remaining"]);
+}
 
 function getFriendCount($settings,$user){
 
@@ -41,10 +37,6 @@ function getFriendCount($settings,$user){
 
 	return $string["friends_count"];
 }
-
-$user = "juanantoniobm";
-$friendCounter = getFriendCount($settings,$user);
-echo $friendCounter;
 
 function isFriend($settings,$user,$userToDetect){
 
@@ -93,8 +85,4 @@ function getFriendPage($settings,$user,$nextCursor){
 
 	return $string["next_cursor"];
 }
-
-$userToDetect = "isuriv";
-isFriend($settings,$user,$userToDetect);
-
 ?>
